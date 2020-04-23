@@ -1,3 +1,5 @@
+# inspired by https://github.com/ppoffice/ant-colony-tsp
+
 import random
 import utils
 
