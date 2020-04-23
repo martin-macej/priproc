@@ -21,18 +21,16 @@ def bee_colony_algo(cities, bee_count, move_count):
     print('Total time: ', total_time)
     print('\n\n\n')
 
-def ant_colony_algo(cities, ant_count, generations, alpha, beta, rho, q, strategy):
-    print('Ant colony algorithm v', strategy)
+def ant_colony_algo(cities, ant_count, generations, alpha, beta, rho, q):
+    print('Ant colony algorithm')
     start = utils.start_timer()
-    ant_colony.main(cities, ant_count, generations, alpha, beta, rho, q, strategy)
+    ant_colony.main(cities, ant_count, generations, alpha, beta, rho, q)
     end = utils.end_timer()
     total_time = utils.get_total_time(start, end)
     print('Total time: ', total_time)
     print('\n\n\n')
 
-bee_colony_algo(50, 100, 4)
-ant_colony_algo(50, 100, 10, 1.0, 10.0, 0.5, 10, 1)
-ant_colony_algo(50, 100, 10, 1.0, 10.0, 0.5, 10, 2)
-ant_colony_algo(50, 100, 10, 1.0, 10.0, 0.5, 10, 3)
-artificial_bee_colony_algo(50, 100, 0.5, 0.1, 100, 20)
+bee_colony_algo(100, 100, 2)
+ant_colony_algo(100, 100, 1, 1.0, 10.0, 0.5, 200)
+artificial_bee_colony_algo(100, 100, 0.5, 0.2, 10, 20)
 

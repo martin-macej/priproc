@@ -40,7 +40,6 @@ class Bee:
         self.choosen_nodes = nods
         self.total_distance()
 
-
 def main(bee_count, move_count, cities_count):
     bees = []
     super_extra_ultra_special_intergalactic_bee = Bee()

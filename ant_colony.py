@@ -8,14 +8,13 @@ class Graph(object):
         self.pheromone = [[1 / (rank * rank) for j in range(rank)] for i in range(rank)]
 
 class ACO(object):
-    def __init__(self, ant_count, generations, alpha, beta, rho, q, strategy):
+    def __init__(self, ant_count, generations, alpha, beta, rho, q):
         self.Q = q
         self.rho = rho
         self.beta = beta
         self.alpha = alpha
         self.ant_count = ant_count
         self.generations = generations
-        self.update_strategy = strategy
 
     def _update_pheromone(self, graph: Graph, ants: list):
         for i, row in enumerate(graph.pheromone):
@@ -83,14 +82,9 @@ class _Ant(object):
         for _ in range(1, len(self.tabu)):
             i = self.tabu[_ - 1]
             j = self.tabu[_]
-            if self.colony.update_strategy == 1:
-                self.pheromone_delta[i][j] = self.colony.Q
-            elif self.colony.update_strategy == 2:
-                self.pheromone_delta[i][j] = self.colony.Q / self.graph.matrix[i][j]
-            else:
-                self.pheromone_delta[i][j] = self.colony.Q / self.total_cost
+            self.pheromone_delta[i][j] = self.colony.Q / self.graph.matrix[i][j]
 
-def main(cities, ant_count, generations, alpha, beta, rho, q, strategy):
+def main(cities, ant_count, generations, alpha, beta, rho, q):
     cities = utils.loadCities(cities)
     cost_matrix = []
     rank = len(cities)
@@ -99,7 +93,7 @@ def main(cities, ant_count, generations, alpha, beta, rho, q, strategy):
         for j in range(rank):
             row.append(utils.get_distance(cities[i], cities[j]))
         cost_matrix.append(row)
-    aco = ACO(ant_count, generations, alpha, beta, rho, q, strategy)
+    aco = ACO(ant_count, generations, alpha, beta, rho, q)
     graph = Graph(cost_matrix, rank)
     path = aco.solve(graph)
     cities_points = []
