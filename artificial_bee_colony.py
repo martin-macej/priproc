@@ -8,7 +8,7 @@ class Bee:
         self.role = '-'
         self.cities_list = list(cities)
         self.distance = 0
-        self.cycle = 0
+        self.without_change = 0
 
 def make_distance_table(cities):
     length = len(cities)
@@ -51,8 +51,6 @@ def permute_path(path):
     return new_path
 
 def forage(bee, table, limit):
-    old_path = bee.cities_list
-    old_distance = get_distance_of_path(old_path, table)
     best_new_path = []
     best_new_dist = -1
     for i in range(5):
@@ -65,11 +63,12 @@ def forage(bee, table, limit):
     if best_new_dist < bee.distance:
         bee.cities_list = list(best_new_path)
         bee.distance = best_new_dist
-        bee.cycle = 0
+        bee.without_change = 0
     else:
-        bee.cycle += 1
-    if bee.cycle >= limit:
+        bee.without_change += 1
+    if bee.without_change >= limit:
         bee.role = 'Scout'
+        bee.without_change = 0
     return bee.distance, list(bee.cities_list)
 
 def scout(bee, table):
@@ -78,15 +77,15 @@ def scout(bee, table):
     bee.cities_list = new_path
     bee.distance = get_distance_of_path(new_path, table)
     bee.role = 'Forager'
-    bee.cycle = 0
+    bee.without_change = 0
 
-def waggle(hive, best_distance, table, forager_limit, scout_count):
+def waggle(hive, best_distance, table, limit, scout_count):
     best_path = []
     results = []
 
     for i in range(0, len(hive)):
         if hive[i].role == 'Forager':
-            distance, path = forage(hive[i], table, forager_limit)
+            distance, path = forage(hive[i], table, limit)
             if distance < best_distance:
                 best_distance = distance
                 best_path = list(hive[i].cities_list)
@@ -109,24 +108,27 @@ def recruit(hive, best_distance, best_path, table):
             if new_distance < best_distance:
                 best_distance = new_distance
                 best_path = new_path
+                hive[i].distance = new_distance
+                hive[i].cities_list = best_path
+
     return best_distance, best_path
 
-def main(cities_count, population, forager_percent, scout_percent, cycle_limit, forager_limit):
+def main(cities_count, population, forager_percent, scout_percent, cycle_limit, limit):
+    best_distance = sys.maxsize
+    best_path = []
+
     onlooker_percent = 1 - forager_percent
     scout_count = math.ceil(population * scout_percent)
     cycle = 1
 
     cities = utils.loadCities(cities_count)
 
-    best_distance = sys.maxsize
-    best_path = []
-
     table = make_distance_table(cities)
     hive = initialize_hive(population, cities)
     assign_roles(hive, [onlooker_percent, forager_percent], table)
 
     while cycle < cycle_limit:
-        waggle_distance, waggle_path = waggle(hive, best_distance, table, forager_limit, scout_count)
+        waggle_distance, waggle_path = waggle(hive, best_distance, table, limit, scout_count)
         if waggle_distance < best_distance:
             best_distance = waggle_distance
             best_path = list(waggle_path)

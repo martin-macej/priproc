@@ -6,7 +6,7 @@ class Bee:
     def __init__(self):
         self.visited_cities = []
         self.recruiter = True
-        self.dist = 0
+        self.distance = float("inf")
 
     def move(self, move_count, all_cities):
         for i in range(move_count):
@@ -41,10 +41,11 @@ class Bee:
         self.total_distance()
 
 def main(bee_count, move_count, cities_count):
-    bees = []
-    super_extra_ultra_special_intergalactic_bee = Bee()
     all_cities = utils.loadCities(cities_count)
 
+    super_extra_ultra_special_intergalactic_bee = Bee()
+    bees = []
+    
     for i in range(bee_count):
         bees.append(Bee())
 
@@ -58,32 +59,24 @@ def main(bee_count, move_count, cities_count):
 
         max_distance = max(bees, key=lambda b: b.distance).distance
         min_distance = min(bees, key=lambda b: b.distance).distance
-        distance_difference = max_distance - min_distance
+        middle_distance_difference = (max_distance + min_distance) / 2
 
         recruiters = []
         for bee in bees:
-            Ob = (max_distance - bee.distance) / distance_difference
-            probs = np.e ** (-(1 - Ob) / (len(bee.visited_cities) * 0.01))
-
-            if rand.uniform(0, 1) < probs:
+            if bee.distance > middle_distance_difference:
                 bee.change_role(True)
                 recruiters.append(bee)
             else:
                 bee.change_role(False)
 
-        divider = sum([(max_distance - bee.distance) / distance_difference for bee in recruiters])
-        probs = [((max_distance - bee.distance) / distance_difference) / divider for bee in recruiters]
-        
-        cumulative_probs = [sum(probs[:x + 1]) for x in range(len(probs))]
-        
         for bee in bees:
             if not bee.recruiter:
                 rndm = rand.uniform(0, 1)
                 selected_bee = Bee()
-                for i, cp in enumerate(cumulative_probs):
-                    if rndm < cp:
-                        selected_bee = recruiters[i]
-                        break
+                if rndm < 0.5:
+                    selected_bee = recruiters[rand.randrange(0, len(recruiters) - 1)]
+                else:
+                    selected_bee = super_extra_ultra_special_intergalactic_bee
                 bee.replace_cities(selected_bee.visited_cities[:])
 
     utils.plot(super_extra_ultra_special_intergalactic_bee.visited_cities)

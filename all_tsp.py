@@ -30,7 +30,7 @@ def ant_colony_algo(cities, ant_count, generations, alpha, beta, rho, q):
     print('Total time: ', total_time)
     print('\n\n\n')
 
-bee_colony_algo(100, 100, 2)
+bee_colony_algo(100, 100, 6)
 ant_colony_algo(100, 100, 1, 1.0, 10.0, 0.5, 200)
-artificial_bee_colony_algo(100, 100, 0.5, 0.2, 10, 20)
+artificial_bee_colony_algo(100, 100, 0.5, 0.2, 50, 5)
 
